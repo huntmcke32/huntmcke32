@@ -1,0 +1,73 @@
+USE stat226;
+
+show tables;
+
+alter table lds
+add date Date;
+
+update lds
+set date = str_to_date(char_date, '%m/%d/%y')
+
+alter table lds drop char_date;
+
+describe lds;
+
+select avg(interest) as mavg
+from lds
+where weekday(date) = 0;
+
+
+select avg(interest) as wkdavg
+from lds
+where weekday(date) = 5
+OR weekday(date) = 6;
+
+select avg(interest) from lds
+where weekday(date) = 0 or
+where weekday(date) = 1 or
+where weekday(date) = 2 or
+where weekday(date) = 3 or
+where weekday(date) = 4;
+
+
+select min(interest) from lds;
+
+
+select max(interest) as maxint form lds;
+
+create table correlation as select interest, lag(interest)
+over () as lagg_interest 
+from lds;
+
+
+select avg(interest) from correlation;
+
+select avg(lagg_interest) from correlation;
+
+select stddev(interest) from correlation;
+
+select stddev(lagg_interest) from correlation;
+
+set @n = 89;
+
+set @xbar = 30.3708
+
+select @xbar;
+
+set @ybar = 30.4045;
+
+select @ybar;
+
+set @xstdv = 21.111997772432364;
+
+select @xstdv = 21.111997772432364;
+
+set @ystdv = 21.105789770179225;
+
+select @ystdv;
+
+select sum(   ((interest - @xbar) / @xstdv) * ((lagg_interest - @ybar) / @ystdv)   ) from correlation;
+
+select 4.427101392154267234525081995462 * (1/@n);
+- gives us the correlation coefficient
+

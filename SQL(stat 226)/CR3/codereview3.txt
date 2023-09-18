@@ -1,0 +1,32 @@
+query:
+select concat(first_name, ' ', last_name) AS full_name,
+    -> address,
+    -> concat(city, ', ', country) AS city
+    -> from customer left join address
+    -> on customer.address_id=address.address_id
+    -> join city
+    -> on address.city_id=city.city_id
+    -> join country
+    -> on country.country_id=city.country_id
+    -> where active = 0
+    -> order by last_name;
+
+table:
+
+| full_name        | address                          | city                                   |
++------------------+----------------------------------+----------------------------------------+
+| HARRY ARCE       | 1922 Miraj Way                   | Najafabad, Iran                        |
+| JUDITH COX       | 1966 Amroha Avenue               | Daxian, China                          |
+| MAURICE CRAWLEY  | 1785 So Bernardo do Campo Street | Coatzacoalcos, Mexico                  |
+| THEODORE CULP    | 1704 Tambaram Manor              | Uluberia, India                        |
+| BEN EASTER       | 886 Tonghae Place                | Kamyin, Russian Federation             |
+| JIMMIE EGGLESTON | 505 Madiun Boulevard             | Wroclaw, Poland                        |
+| KENNETH GOODEN   | 1542 Lubumbashi Boulevard        | Bat Yam, Israel                        |
+| CHRISTIAN JUNG   | 949 Allende Lane                 | Amroha, India                          |
+| HEIDI LARSON     | 1103 Bilbays Parkway             | Xiangfan, China                        |
+| SANDRA MARTIN    | 360 Toulouse Parkway             | Southend-on-Sea, United Kingdom        |
+| ERICA MATTHEWS   | 1294 Firozabad Drive             | Pingxiang, China                       |
+| PENNY NEAL       | 1675 Xiangfan Manor              | Kumbakonam, India                      |
+| TERRANCE ROUSH   | 42 Fontana Avenue                | Szkesfehrvr, Hungary                   |
+| NATHAN RUNYON    | 264 Bhimavaram Manor             | Charlotte Amalie, Virgin Islands, U.S. |
+| SHEILA WELLS     | 848 Tafuna Manor                 | Ktahya, Turkey                

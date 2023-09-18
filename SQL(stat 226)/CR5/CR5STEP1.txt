@@ -1,0 +1,14 @@
+select productName, buyPrice from products
+where productName not in
+(select productName from products where productName like '1995%')
+order by buyPrice desc
+Limit 5;
+
+
+| productName                    | buyPrice |
++--------------------------------+----------+
+| 1962 LanciaA Delta 16V         |   103.42 |
+| 1998 Chrysler Plymouth Prowler |   101.51 |
+| 1952 Alpine Renault 1300       |    98.58 |
+| 1956 Porsche 356A Coupe        |    98.30 |
+| 2001 Ferrari Enzo              |    95.59 |
