@@ -1,0 +1,41 @@
+#code appended to setup.sas, replacing everything starting at line 2377:
+proc export data=dataset
+    outfile="/ICPSR.csv"
+    dbms=csv
+    replace;
+run;   
+
+
+
+#code for setting up data and making the Table 1 in R
+library(tidyverse)
+donorDF <- read.csv("ICPSR.csv")
+donorDFcard <- donorDF[donorDF[["SC0794"]] <= 2, ]
+tab1DF <- donorDFcard[, c("DC1", "DC3", "DC6", "DC9", "DC10", "DC13", "DC16", "DC17", "DC19", "SC0487", "SC0609",
+                          "SC0610", "SC0611", "SC0612", "SC0613", "SC0889", "SC0794")] %>%
+  filter(DC1 < 8, DC3 < 900, DC6 < 97, DC10 < 8, DC16 < 90, DC19 < 90, SC0487 < 5, 
+         SC0609 < 90, SC0610 < 90, SC0611 < 90, SC0612 < 90, SC0613 < 90)
+tab1DF[["DC1"]] <- factor(tab1DF[["DC1"]], 1:2, c("Male", "Female"))
+tab1DF[["DC6"]] <- factor(tab1DF[["DC6"]], 1:6, c("Northeast", "Midwest", "South", "West", "Outlying Territories", 
+                                                  "Foreign Country"))
+tab1DF[["DC9"]] <- factor(tab1DF[["DC9"]], 1:4, c("North", "Midwest", "South", "West"))
+tab1DF[["DC10"]] <- factor(tab1DF[["DC10"]], 1:4, c("Single", "Married", "Widowed", "Divorced"))
+tab1DF[["DC13"]] <- factor(tab1DF[["DC13"]], c(1:4,0), c("Northeast", "Midwest", "South", "West", "Foreign Country"))
+tab1DF[["DC16"]] <- (tab1DF[["DC16"]] >= 1) %>% as.numeric %>% factor(1:0, c("Hispanic", "Non-Hispanic"))
+tab1DF[["DC17"]] <- factor(tab1DF[["DC17"]], 1:4, c("White", "Black", "American Indian", "Asian and Pacific Islander"))
+tab1DF[["SC0487"]] <- factor(tab1DF[["SC0487"]], c(3, 1, 2), c("About right", "Overweight", "Underweight"))
+tab1DF[["SC0889"]] <- factor(tab1DF[["SC0889"]], 1:18, c("$0", "$1,000", "$2,000", "$3,000", "$4,000", "$5,000", "$6,000", 
+                                                  "$7,000", "$9,000", "$11,500", "$14,000", "$16,500", "$19,000", 
+                                                  "$21,000", "$23,500", "$25,000", "$50,000", "$75,000"))
+tab1DF[["SC0794"]] <- factor(tab1DF[["SC0794"]], 1:2, c("Yes", "No"))
+for(i in c("SC0609",
+           "SC0610", "SC0611", "SC0612", "SC0613")){
+  tab1DF[[i]] <- factor(tab1DF[[i]], 1:3, c("Yes", "No", "Unsure"))
+}
+colnames(tab1DF) <- c("Sex", "Age", "Birth Region", "Death Region", "Marital Status", "Residence Region",
+                      "Hispanic", "Race", "Years of Education", "Weight", "Heroin", "Stimulants", "Marijuana", 
+                      "Cocaine", "Hallucinogens", "Income at Least", "Donor Card")
+tableone::CreateTableOne(vars = c("Sex", "Birth Region", "Death Region", "Marital Status", "Residence Region",
+                                  "Hispanic", "Race", "Years of Education", "Weight", "Heroin", "Stimulants", "Marijuana", 
+                                  "Cocaine", "Hallucinogens", "Income at Least"), strata = "Donor Card",
+                         data = tab1DF)
